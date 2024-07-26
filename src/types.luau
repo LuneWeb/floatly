@@ -27,8 +27,8 @@ export type Expression = {
 
 export type Statement = {
 	type: "Assign",
-	value: Expression,
-	assign: Expression,
+	assigning: Expression,
+	to: Expression,
 } | {
 	type: "Declaration",
 	const: boolean,

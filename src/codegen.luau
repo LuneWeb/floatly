@@ -18,8 +18,8 @@ function cgen.fromStatement(expr: types.Statement): string
 	local buffer = createBuffer()
 
 	if expr.type == "Assign" then
-		local assigning = cgen.fromExpression(expr.assign)
-		local to = cgen.fromExpression(expr.value)
+		local assigning = cgen.fromExpression(expr.assigning)
+		local to = cgen.fromExpression(expr.to)
 		buffer:append(`{assigning} = {to}`)
 	elseif expr.type == "Declaration" then
 		local ident = cgen.fromExpression(expr.ident)

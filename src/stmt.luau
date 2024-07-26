@@ -4,11 +4,11 @@ local stmt = {}
 export type Statement = types.Statement
 export type Expression = types.Expression
 
-function stmt.assign(value: Expression, to: Expression): Statement
+function stmt.assign(assigning: Expression, to: Expression): Statement
 	return {
 		type = "Assign",
-		assign = value,
-		value = to,
+		assigning = assigning,
+		to = to,
 	}
 end
 
