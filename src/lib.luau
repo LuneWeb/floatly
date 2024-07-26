@@ -2,7 +2,7 @@ local js = require("./init")
 local types = require("./types")
 
 export type Variable = {
-	ident: types.EIdentifier | types.EIndex,
+	ident: types.EIdentifier | types.EIndex | types.ECall,
 }
 
 export type SupportedType = Variable | string | number | boolean | (inner: CodeBuilder) -> ()
@@ -41,17 +41,22 @@ local function expressionFromLuau(value: SupportedType): js.Expression
 end
 
 export type CodeBuilder = {
-	var: (self: CodeBuilder, name: string, value: SupportedType) -> Variable,
+	var: (self: CodeBuilder, value: SupportedType) -> Variable,
 	get: (self: CodeBuilder, path: string) -> Variable,
-	callFunction: (self: CodeBuilder, var: Variable, ...SupportedType) -> (),
+	callFunction: (self: CodeBuilder, var: Variable, ...SupportedType) -> Variable,
+	setIndex: (self: CodeBuilder, var: Variable, path: string, value: SupportedType) -> (),
 	build: (self: CodeBuilder) -> string,
 }
 
 function lib.new(): CodeBuilder
 	local builder = {}
 	local nodes: { js.Node } = {}
+	local id = 0
 
-	function builder:var(name: string, value: SupportedType): Variable
+	function builder:var(value: SupportedType): Variable
+		local name = `var_{id}`
+		id += 1
+
 		local ident = js.expr.ident(name)
 		local valueExpr = expressionFromLuau(value)
 
@@ -82,16 +87,26 @@ function lib.new(): CodeBuilder
 		}
 	end
 
-	function builder:callFunction(var: Variable, ...: SupportedType): ()
+	function builder:callFunction(var: Variable, ...: SupportedType): Variable
 		local args = {}
 
 		for _, value in { ... } do
 			table.insert(args, expressionFromLuau(value))
 		end
 
+		local value = js.expr.call(var.ident, table.unpack(args))
+
+		return {
+			ident = value,
+		}
+	end
+
+	function builder:setIndex(var: Variable, path: string, value: SupportedType)
+		local index = builder:get(js.cgen.fromExpression(var.ident) .. "." .. path)
+
 		table.insert(nodes, {
-			kind = "Expression",
-			value = js.expr.call(var.ident, table.unpack(args)),
+			kind = "Statement",
+			value = js.stmt.assign(index.ident, expressionFromLuau(value)),
 		})
 	end
 
