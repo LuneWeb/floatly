@@ -1,16 +1,14 @@
 local types = require("./types")
 local expr = {}
 
-type Expression = types.Expression
-
-function expr.ident(id: string): Expression
+function expr.ident(id: string): types.EIdentifier
 	return {
 		type = "Identifier",
 		value = id,
 	}
 end
 
-function expr.index(value: Expression, index: Expression): Expression
+function expr.index(value: types.Expression, index: types.Expression): types.EIndex
 	return {
 		type = "Index",
 		value = value,
@@ -18,7 +16,7 @@ function expr.index(value: Expression, index: Expression): Expression
 	}
 end
 
-function expr.call(value: Expression, ...: Expression): Expression
+function expr.call(value: types.Expression, ...: types.Expression): types.ECall
 	return {
 		type = "Call",
 		value = value,
@@ -26,21 +24,21 @@ function expr.call(value: Expression, ...: Expression): Expression
 	}
 end
 
-function expr.string(value: string): Expression
+function expr.string(value: string): types.EString
 	return {
 		type = "String",
 		value = value,
 	}
 end
 
-function expr.number(value: number): Expression
+function expr.number(value: number): types.ENumber
 	return {
 		type = "Number",
 		value = value,
 	}
 end
 
-function expr.binOp(lh: Expression, op: string, rh: Expression): Expression
+function expr.binOp(lh: types.Expression, op: string, rh: types.Expression): types.BinOp
 	return {
 		type = "BinOp",
 		lh = lh,
@@ -49,14 +47,14 @@ function expr.binOp(lh: Expression, op: string, rh: Expression): Expression
 	}
 end
 
-function expr.array(...: Expression): Expression
+function expr.array(...: types.Expression): types.EArray
 	return {
 		type = "Array",
 		values = { ... },
 	}
 end
 
-function expr.dict(luaDict: { [Expression]: Expression }): Expression
+function expr.dict(luaDict: { [types.Expression]: types.Expression }): types.EDictionary
 	return {
 		type = "Dictionary",
 		pairs = luaDict,
@@ -67,7 +65,7 @@ function expr.scope(): types.ScopeBuilder
 	local builder = {}
 	local nodes: { types.Node } = {}
 
-	function builder:expr(expr: Expression): types.ScopeBuilder
+	function builder:expr(expr: types.Expression): types.ScopeBuilder
 		table.insert(nodes, {
 			kind = "Expression",
 			value = expr,
@@ -85,7 +83,7 @@ function expr.scope(): types.ScopeBuilder
 		return builder
 	end
 
-	function builder:finish(): Expression
+	function builder:finish(): types.EScope
 		return {
 			type = "Scope",
 			nodes = nodes,
@@ -95,7 +93,7 @@ function expr.scope(): types.ScopeBuilder
 	return builder
 end
 
-function expr.funct(params: { Expression }, scope: Expression): Expression
+function expr.funct(params: { types.Expression }, scope: types.EScope): types.EFunction
 	return {
 		type = "Function",
 		params = params,

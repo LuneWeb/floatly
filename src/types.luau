@@ -1,39 +1,69 @@
-export type Expression = {
+export type EIdentifier = {
 	type: "Identifier",
 	value: string,
-} | {
+}
+
+export type EIndex = {
 	type: "Index",
 	value: Expression,
 	index: Expression,
-} | {
+}
+
+export type ECall = {
 	type: "Call",
 	value: Expression,
 	args: { Expression },
-} | {
+}
+
+export type EString = {
 	type: "String",
 	value: string,
-} | {
+}
+
+export type ENumber = {
 	type: "Number",
 	value: number,
-} | {
+}
+
+export type BinOp = {
 	type: "BinOp",
 	lh: Expression,
 	op: string,
 	rh: Expression,
-} | {
+}
+
+export type EArray = {
 	type: "Array",
 	values: { Expression },
-} | {
+}
+
+export type EDictionary = {
 	type: "Dictionary",
 	pairs: { [Expression]: Expression },
-} | {
+}
+
+export type EScope = {
 	type: "Scope",
 	nodes: { Node },
-} | {
+}
+
+export type EFunction = {
 	type: "Function",
 	params: { Expression },
 	scope: Expression,
 }
+
+export type Expression =
+	| EIdentifier
+	| EIndex
+	| ECall
+	| EString
+	| ENumber
+	| BinOp
+	| EArray
+	| EDictionary
+	| EScope
+	| EFunction
 
 export type Statement = {
 	type: "Assign",
@@ -57,7 +87,7 @@ export type Node = {
 export type ScopeBuilder = {
 	stmt: (self: ScopeBuilder, stmt: Statement) -> ScopeBuilder,
 	expr: (self: ScopeBuilder, expr: Expression) -> ScopeBuilder,
-	finish: (self: ScopeBuilder) -> Expression,
+	finish: (self: ScopeBuilder) -> EScope,
 }
 
 return {}
