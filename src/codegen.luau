@@ -111,6 +111,8 @@ function cgen.fromExpression(expr: types.Expression): string
 			elseif node.kind == "Statement" then
 				buffer:append(cgen.fromStatement(node.value))
 			end
+
+			buffer:append(`\n`)
 		end
 
 		buffer.tabs -= 1
