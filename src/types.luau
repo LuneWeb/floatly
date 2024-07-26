@@ -23,6 +23,12 @@ export type Expression = {
 } | {
 	type: "Array",
 	values: { Expression },
+} | {
+	type: "Dictionary",
+	pairs: { [Expression]: Expression },
+} | {
+	type: "Scope",
+	nodes: { Node },
 }
 
 export type Statement = {
@@ -34,6 +40,14 @@ export type Statement = {
 	const: boolean,
 	ident: Expression,
 	value: Expression,
+}
+
+export type Node = {
+	kind: "Expression",
+	value: Expression,
+} | {
+	kind: "Statement",
+	value: Statement,
 }
 
 return {}

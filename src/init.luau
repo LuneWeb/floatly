@@ -1,16 +1,11 @@
 local expr = require("./expr")
 local stmt = require("./stmt")
 local cgen = require("./codegen")
+local types = require("./types")
 
-export type Expression = expr.Expression
-export type Statement = stmt.Statement
-export type Node = {
-	kind: "Expression",
-	value: Expression,
-} | {
-	kind: "Statement",
-	value: Statement,
-}
+export type Expression = types.Expression
+export type Statement = types.Statement
+export type Node = types.Node
 
 return {
 	expr = expr,

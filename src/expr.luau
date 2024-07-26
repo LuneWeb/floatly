@@ -56,4 +56,43 @@ function expr.array(...: Expression): Expression
 	}
 end
 
+function expr.dict(luaDict: { [Expression]: Expression }): Expression
+	return {
+		type = "Dictionary",
+		pairs = luaDict,
+	}
+end
+
+function expr.scope()
+	local builder = {}
+	local nodes: { types.Node } = {}
+
+	function builder:expr(expr: Expression): typeof(builder)
+		table.insert(nodes, {
+			kind = "Expression",
+			value = expr,
+		})
+
+		return builder
+	end
+
+	function builder:stmt(stmt: types.Statement): typeof(builder)
+		table.insert(nodes, {
+			kind = "Statement",
+			value = stmt,
+		})
+
+		return builder
+	end
+
+	function builder:finish(): Expression
+		return {
+			type = "Scope",
+			nodes = nodes,
+		}
+	end
+
+	return builder
+end
+
 return expr

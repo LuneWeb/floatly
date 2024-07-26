@@ -88,6 +88,33 @@ function cgen.fromExpression(expr: types.Expression): string
 		else
 			buffer:append("}")
 		end
+	elseif expr.type == "Dictionary" then
+		buffer:append("{")
+
+		for keyExpr, valueExpr in expr.pairs do
+			local key = cgen.fromExpression(keyExpr)
+			local value = cgen.fromExpression(valueExpr)
+
+			buffer:append(`\n\t[{key}]: {value},`)
+		end
+
+		buffer:append("\n}")
+	elseif expr.type == "Scope" then
+		buffer:append("{")
+		buffer.tabs += 1
+
+		buffer:append("\n")
+
+		for _, node in expr.nodes do
+			if node.kind == "Expression" then
+				buffer:append(cgen.fromExpression(node.value))
+			elseif node.kind == "Statement" then
+				buffer:append(cgen.fromStatement(node.value))
+			end
+		end
+
+		buffer.tabs -= 1
+		buffer:append("\n}")
 	end
 
 	return buffer.str
