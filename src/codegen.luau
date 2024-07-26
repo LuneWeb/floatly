@@ -51,6 +51,8 @@ function cgen.fromExpression(expr: types.Expression): string
 		buffer:append(`'{expr.value}'`)
 	elseif expr.type == "Number" then
 		buffer:append(`{expr.value}`)
+	elseif expr.type == "Bool" then
+		buffer:append(`{expr.value}`)
 	elseif expr.type == "Identifier" then
 		buffer:append(`{expr.value}`)
 	elseif expr.type == "Index" then

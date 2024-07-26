@@ -38,6 +38,13 @@ function expr.number(value: number): types.ENumber
 	}
 end
 
+function expr.bool(value: boolean): types.EBool
+	return {
+		type = "Bool",
+		value = value,
+	}
+end
+
 function expr.binOp(lh: types.Expression, op: string, rh: types.Expression): types.BinOp
 	return {
 		type = "BinOp",

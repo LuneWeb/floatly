@@ -25,6 +25,11 @@ export type ENumber = {
 	value: number,
 }
 
+export type EBool = {
+	type: "Bool",
+	value: boolean,
+}
+
 export type BinOp = {
 	type: "BinOp",
 	lh: Expression,
@@ -59,6 +64,7 @@ export type Expression =
 	| ECall
 	| EString
 	| ENumber
+	| EBool
 	| BinOp
 	| EArray
 	| EDictionary

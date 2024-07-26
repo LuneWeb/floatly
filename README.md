@@ -14,4 +14,3 @@ The goal of this library is to assist developers in making js bindings for their
 ## Todos
 
 - operators as expressions (e.g. + - / && || etc)
-- boolean expressions
