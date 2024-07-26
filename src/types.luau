@@ -54,7 +54,7 @@ export type EFunction = {
 }
 
 export type Expression =
-	| EIdentifier
+	EIdentifier
 	| EIndex
 	| ECall
 	| EString
