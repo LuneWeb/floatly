@@ -10,3 +10,8 @@ JavaScript codegen library written in Luau
 ## Goal
 
 The goal of this library is to assist developers in making js bindings for their luneweb applications
+
+## Todos
+
+- function expression
+- if statements
