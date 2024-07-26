@@ -29,7 +29,7 @@ local printInfo = expr
 	-- if statement
 	:stmt(
 		stmt.ifStmt(
-			expr.ident("testFunc"),
+			expr.binOp(expr.ident("testFunc"), "!==", expr.ident("undefined")),
 			expr.scope():expr(expr.call(expr.ident("testFunc"), expr.number(1), expr.number(2))):finish()
 		)
 			:else_(expr.scope():finish())
