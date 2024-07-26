@@ -3,7 +3,9 @@ local expr = js.expr
 local stmt = js.stmt
 
 local printFunction = expr.index(expr.ident("console"), expr.ident("log"))
-local printInfo = expr.scope()
+local printInfo = expr
+	.scope()
+	-- printing
 	:expr(expr.call(
 		printFunction,
 		expr.string("Ashley"),
@@ -13,6 +15,7 @@ local printInfo = expr.scope()
 			[expr.string("def")] = expr.number(-50),
 		})
 	))
+	-- creating function
 	:stmt(
 		stmt.declaration(
 			"const",
@@ -23,11 +26,15 @@ local printInfo = expr.scope()
 			)
 		)
 	)
+	-- if statement
+	:stmt(
+		stmt.ifStmt(
+			expr.ident("testFunc"),
+			expr.scope():expr(expr.call(expr.ident("testFunc"), expr.number(1), expr.number(2))):finish()
+		)
+			:else_(expr.scope():finish())
+			:finish()
+	)
 	:finish()
 
-print(js.stringify({
-	{
-		kind = "Expression",
-		value = printInfo,
-	},
-}))
+print(js.stringify(printInfo.nodes))

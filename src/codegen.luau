@@ -14,17 +14,31 @@ local function createBuffer()
 	return buffer
 end
 
-function cgen.fromStatement(expr: types.Statement): string
+function cgen.fromStatement(stmt: types.Statement): string
 	local buffer = createBuffer()
 
-	if expr.type == "Assign" then
-		local assigning = cgen.fromExpression(expr.assigning)
-		local to = cgen.fromExpression(expr.to)
+	if stmt.type == "Assign" then
+		local assigning = cgen.fromExpression(stmt.assigning)
+		local to = cgen.fromExpression(stmt.to)
 		buffer:append(`{assigning} = {to}`)
-	elseif expr.type == "Declaration" then
-		local ident = cgen.fromExpression(expr.ident)
-		local value = cgen.fromExpression(expr.value)
-		buffer:append(`{expr.const and "const" or "let"} {ident} = {value}`)
+	elseif stmt.type == "Declaration" then
+		local ident = cgen.fromExpression(stmt.ident)
+		local value = cgen.fromExpression(stmt.value)
+		buffer:append(`{stmt.const and "const" or "let"} {ident} = {value}`)
+	elseif stmt.type == "If" then
+		for _, clause in stmt.clauses do
+			if clause.type == "Else" then
+				buffer:append(`else`)
+				buffer:append(cgen.fromExpression(clause.scope))
+			else
+				buffer:append(
+					`\n{clause.type == "If" and "if" or clause.type == "ElseIf" and "else if"} ({cgen.fromExpression(
+						clause.condition
+					)})`
+				)
+				buffer:append(cgen.fromExpression(clause.scope))
+			end
+		end
 	end
 
 	return buffer.str

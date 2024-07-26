@@ -65,6 +65,11 @@ export type Expression =
 	| EScope
 	| EFunction
 
+export type IfStatementClause =
+	{ type: "If", condition: Expression, scope: EScope }
+	| { type: "ElseIf", condition: Expression, scope: EScope }
+	| { type: "Else", scope: EScope }
+
 export type Statement = {
 	type: "Assign",
 	assigning: Expression,
@@ -74,6 +79,9 @@ export type Statement = {
 	const: boolean,
 	ident: Expression,
 	value: Expression,
+} | {
+	type: "If",
+	clauses: { IfStatementClause },
 }
 
 export type Node = {
@@ -88,6 +96,12 @@ export type ScopeBuilder = {
 	stmt: (self: ScopeBuilder, stmt: Statement) -> ScopeBuilder,
 	expr: (self: ScopeBuilder, expr: Expression) -> ScopeBuilder,
 	finish: (self: ScopeBuilder) -> EScope,
+}
+
+export type IfStmtBuilder = {
+	elseIf: (self: IfStmtBuilder, condition: Expression, scope: EScope) -> IfStmtBuilder,
+	else_: (self: IfStmtBuilder, scope: EScope) -> IfStmtBuilder,
+	finish: (self: IfStmtBuilder) -> Statement,
 }
 
 return {}
