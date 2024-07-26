@@ -54,7 +54,7 @@ export type EScope = {
 
 export type EFunction = {
 	type: "Function",
-	params: { Expression },
+	params: { Expression | "..." },
 	scope: Expression,
 }
 

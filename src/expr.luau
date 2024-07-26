@@ -100,7 +100,7 @@ function expr.scope(): types.ScopeBuilder
 	return builder
 end
 
-function expr.funct(params: { types.Expression }, scope: types.EScope): types.EFunction
+function expr.funct(params: { types.Expression | "..." }, scope: types.EScope): types.EFunction
 	return {
 		type = "Function",
 		params = params,

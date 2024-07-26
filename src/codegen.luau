@@ -136,8 +136,14 @@ function cgen.fromExpression(expr: types.Expression): string
 	elseif expr.type == "Function" then
 		buffer:append("function(")
 
-		for i, paramExpr in expr.params do
-			local param = cgen.fromExpression(paramExpr)
+		for i, paramExpr: "..." | types.Expression in expr.params do
+			local param
+
+			if paramExpr == "..." then
+				param = "...args"
+			else
+				param = cgen.fromExpression(paramExpr)
+			end
 
 			if i == #expr.params then
 				buffer:append(`{param}`)
