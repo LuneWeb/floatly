@@ -95,4 +95,12 @@ function expr.scope(): types.ScopeBuilder
 	return builder
 end
 
+function expr.funct(params: { Expression }, scope: Expression): Expression
+	return {
+		type = "Function",
+		params = params,
+		scope = scope,
+	}
+end
+
 return expr

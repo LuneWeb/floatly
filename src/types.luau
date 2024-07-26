@@ -29,6 +29,10 @@ export type Expression = {
 } | {
 	type: "Scope",
 	nodes: { Node },
+} | {
+	type: "Function",
+	params: { Expression },
+	scope: Expression,
 }
 
 export type Statement = {

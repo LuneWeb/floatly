@@ -1,5 +1,6 @@
 local js = require("../src/init")
 local expr = js.expr
+local stmt = js.stmt
 
 local printFunction = expr.index(expr.ident("console"), expr.ident("log"))
 local printInfo = expr.scope()
@@ -12,6 +13,16 @@ local printInfo = expr.scope()
 			[expr.string("def")] = expr.number(-50),
 		})
 	))
+	:stmt(
+		stmt.declaration(
+			"const",
+			expr.ident("testFunc"),
+			expr.funct(
+				{ expr.ident("arg1"), expr.ident("arg2") },
+				expr.scope():expr(expr.call(printFunction, expr.ident("arg1"), expr.ident("arg2"))):finish()
+			)
+		)
+	)
 	:finish()
 
 print(js.stringify({

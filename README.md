@@ -13,5 +13,4 @@ The goal of this library is to assist developers in making js bindings for their
 
 ## Todos
 
-- function expression
 - if statements

@@ -117,6 +117,21 @@ function cgen.fromExpression(expr: types.Expression): string
 
 		buffer.tabs -= 1
 		buffer:append("\n}")
+	elseif expr.type == "Function" then
+		buffer:append("function(")
+
+		for i, paramExpr in expr.params do
+			local param = cgen.fromExpression(paramExpr)
+
+			if i == #expr.params then
+				buffer:append(`{param}`)
+			else
+				buffer:append(`{param}, `)
+			end
+		end
+
+		buffer:append(")")
+		buffer:append(cgen.fromExpression(expr.scope))
 	end
 
 	return buffer.str
