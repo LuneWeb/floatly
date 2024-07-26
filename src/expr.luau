@@ -1,7 +1,7 @@
 local types = require("./types")
 local expr = {}
 
-export type Expression = types.Expression
+type Expression = types.Expression
 
 function expr.ident(id: string): Expression
 	return {
@@ -63,11 +63,11 @@ function expr.dict(luaDict: { [Expression]: Expression }): Expression
 	}
 end
 
-function expr.scope()
+function expr.scope(): types.ScopeBuilder
 	local builder = {}
 	local nodes: { types.Node } = {}
 
-	function builder:expr(expr: Expression): typeof(builder)
+	function builder:expr(expr: Expression): types.ScopeBuilder
 		table.insert(nodes, {
 			kind = "Expression",
 			value = expr,
@@ -76,7 +76,7 @@ function expr.scope()
 		return builder
 	end
 
-	function builder:stmt(stmt: types.Statement): typeof(builder)
+	function builder:stmt(stmt: types.Statement): types.ScopeBuilder
 		table.insert(nodes, {
 			kind = "Statement",
 			value = stmt,

@@ -6,6 +6,7 @@ local types = require("./types")
 export type Expression = types.Expression
 export type Statement = types.Statement
 export type Node = types.Node
+export type ScopeBuilder = types.ScopeBuilder
 
 return {
 	expr = expr,

@@ -50,4 +50,10 @@ export type Node = {
 	value: Statement,
 }
 
+export type ScopeBuilder = {
+	stmt: (self: ScopeBuilder, stmt: Statement) -> ScopeBuilder,
+	expr: (self: ScopeBuilder, expr: Expression) -> ScopeBuilder,
+	finish: (self: ScopeBuilder) -> Expression,
+}
+
 return {}

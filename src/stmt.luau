@@ -1,8 +1,8 @@
 local types = require("./types")
 local stmt = {}
 
-export type Statement = types.Statement
-export type Expression = types.Expression
+type Statement = types.Statement
+type Expression = types.Expression
 
 function stmt.assign(assigning: Expression, to: Expression): Statement
 	return {
