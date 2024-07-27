@@ -1,9 +1,12 @@
 local floatly = require("../src/lib")
 
 local code = floatly.new()
-local createElement = code:get("document.createElement")
-local title = code:var(code:callFunction(createElement, "h1"))
 
-code:setIndex(title, "innerHTML", "Hello, World!")
+local createElement = code:get("document.createElement")
+local body = code:get("document.body")
+local title = createElement("h1")
+
+title:setMember("innerHTML", "Hello, World!")
+body:getMember("appendChild")(title)
 
 print(code:build())

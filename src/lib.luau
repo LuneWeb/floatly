@@ -1,9 +1,19 @@
 local js = require("./init")
 local types = require("./types")
 
-export type Variable = {
-	ident: types.EIdentifier | types.EIndex | types.ECall,
-}
+export type Ident = types.EIdentifier | types.EIndex | types.ECall
+
+export type Variable = typeof(setmetatable(
+	{} :: {
+		_builder: CodeBuilder,
+		ident: Ident,
+		setMember: (self: Variable, path: string, value: SupportedType) -> (),
+		getMember: (self: Variable, path: string) -> Variable,
+	},
+	{} :: {
+		__call: (self: Variable, ...SupportedType) -> Variable,
+	}
+))
 
 export type SupportedType = Variable | string | number | boolean | (inner: CodeBuilder) -> ()
 
@@ -40,11 +50,46 @@ local function expressionFromLuau(value: SupportedType): js.Expression
 	end
 end
 
+function lib._variable(builder, ident: Ident): Variable
+	local variable = setmetatable({
+		_builder = builder,
+		ident = ident,
+	}, lib._variableMT)
+
+	function variable:setMember(path: string, value: SupportedType): ()
+		local index = builder:get(js.cgen.fromExpression(variable.ident) .. "." .. path)
+
+		table.insert(privateNodes[variable._builder], {
+			kind = "Statement",
+			value = js.stmt.assign(index.ident, expressionFromLuau(value)),
+		})
+	end
+
+	function variable:getMember(path: string): Variable
+		local index = builder:get(js.cgen.fromExpression(variable.ident) .. "." .. path)
+		return variable._builder:var(index)
+	end
+
+	return variable
+end
+
+lib._variableMT = {
+	__call = function(self: Variable, ...: SupportedType): Variable
+		local args = {}
+
+		for _, value in { ... } do
+			table.insert(args, expressionFromLuau(value))
+		end
+
+		local value = js.expr.call(self.ident, table.unpack(args))
+
+		return self._builder:var(lib._variable(self._builder, value))
+	end,
+}
+
 export type CodeBuilder = {
 	var: (self: CodeBuilder, value: SupportedType) -> Variable,
 	get: (self: CodeBuilder, path: string) -> Variable,
-	callFunction: (self: CodeBuilder, var: Variable, ...SupportedType) -> Variable,
-	setIndex: (self: CodeBuilder, var: Variable, path: string, value: SupportedType) -> (),
 	build: (self: CodeBuilder) -> string,
 }
 
@@ -65,9 +110,7 @@ function lib.new(): CodeBuilder
 			value = js.stmt.declaration("let", js.expr.ident(name), valueExpr),
 		})
 
-		return {
-			ident = ident,
-		}
+		return lib._variable(builder, ident)
 	end
 
 	function builder:get(path: string): Variable
@@ -82,32 +125,7 @@ function lib.new(): CodeBuilder
 			ident = js.expr.index(ident, js.expr.string(component))
 		end
 
-		return {
-			ident = ident,
-		}
-	end
-
-	function builder:callFunction(var: Variable, ...: SupportedType): Variable
-		local args = {}
-
-		for _, value in { ... } do
-			table.insert(args, expressionFromLuau(value))
-		end
-
-		local value = js.expr.call(var.ident, table.unpack(args))
-
-		return {
-			ident = value,
-		}
-	end
-
-	function builder:setIndex(var: Variable, path: string, value: SupportedType)
-		local index = builder:get(js.cgen.fromExpression(var.ident) .. "." .. path)
-
-		table.insert(nodes, {
-			kind = "Statement",
-			value = js.stmt.assign(index.ident, expressionFromLuau(value)),
-		})
+		return lib._variable(builder, ident)
 	end
 
 	function builder:build(): string
