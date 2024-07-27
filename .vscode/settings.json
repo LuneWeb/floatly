@@ -3,6 +3,7 @@
   "luau-lsp.platform.type": "standard",
   "luau-lsp.types.definitionFiles": ["~/.luneweb/.type_defs-0.3.0.d.luau"],
   "luau-lsp.require.directoryAliases": {
-    "@lune/": "~/.lune/.typedefs/0.8.6/"
+    "@lune/": "~/.lune/.typedefs/0.8.6/",
+    "@codegen/": "./codegen/"
   }
 }

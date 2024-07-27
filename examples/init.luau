@@ -1,4 +1,4 @@
-local js = require("../src/init")
+local js = require("@codegen/init")
 local expr = js.expr
 local stmt = js.stmt
 

@@ -1,4 +1,4 @@
-local floatly = require("../src/lib")
+local floatly = require("../src")
 
 local code = floatly.new()
 
